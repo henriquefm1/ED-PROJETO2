@@ -1,4 +1,5 @@
-// Identificação do grupo (Nome e RA de cada integrante) aqui 
+//Enrique Cipolla Martins
+//Henrique Ferreira Marciano - 10439797
 
 public class ListaEncadeada {
     NoLinha inicio; // O "head" da lista
@@ -13,7 +14,36 @@ public class ListaEncadeada {
     // Deve manter a lista ordenada pelo numeroLinha
     public void inserir(int numeroLinha, String instrucao) {
         System.out.println("Implementar: Inserir linha " + numeroLinha);
-        // Lógica de inserção ordenada aqui...
+        NoLinha novoNo = new NoLinha(numeroLinha, instrucao);
+        NoLinha atual = this.inicio;
+        NoLinha anterior = null;
+
+        // 1. Percorre a lista para encontrar o ponto de inserção ou a linha existente
+        while (atual != null && atual.numeroLinha < numeroLinha) {
+            anterior = atual;
+            atual = atual.proximo;
+        }
+
+        // 2. Verifica se a linha já existe (Atualização)
+        if (atual != null && atual.numeroLinha == numeroLinha) {
+            atual.instrucao = instrucao; // Apenas atualiza a instrução
+            return false; // Indica que foi uma atualização
+        }
+
+        // 3. Se não existe, é uma inserção.
+        // O novo nó deve ser inserido entre 'anterior' e 'atual'.
+        
+        if (anterior == null) {
+            // Caso 3a: Inserção no início da lista (ou lista vazia)
+            novoNo.proximo = this.inicio;
+            this.inicio = novoNo;
+        } else {
+            // Caso 3b: Inserção no meio ou no fim da lista
+            novoNo.proximo = atual;
+            anterior.proximo = novoNo;
+        }
+        
+        return true; // Indica que foi uma nova inserção
     }
 
     // Método para remover uma linha 
