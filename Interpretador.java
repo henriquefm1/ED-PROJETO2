@@ -162,11 +162,94 @@ public class Interpretador {
     }
 
     private void processarRun() {
-        // TODO (Plano: Semana 3, Dia 15)
-        // 1. Verificar se 'codigo.inicio' é null [cite: 23]
-        // 2. Criar os 26 registradores (ex: int[26]) [cite: 46]
-        // 3. Iniciar o interpretador (percorrer a lista e executar instruções)
-        System.out.println("Implementar (Dia 15): RUN");
+        if (codigo.inicio == null) {
+            System.out.println("Erro: Não há código na memória para executar.");
+            return;
+        }
+
+        this.registradores = new int[26];
+        this.inicializados = new boolean[26];
+
+        NoLinha atual = codigo.inicio;
+        boolean executando = true;
+
+        while (executando && atual != null) {
+            String linhaCompleta = atual.numeroLinha + " " + atual.instrucao;
+            
+            try {
+                String[] partes = atual.instrucao.trim().split("\\s+", 2);
+                String comandoInst = (partes.length > 0) ? partes[0].toUpperCase() : "";
+                String args = (partes.length > 1) ? partes[1] : "";
+                
+                String[] argsPartes = args.split("\\s+");
+                String arg1 = (argsPartes.length > 0) ? argsPartes[0] : "";
+                String arg2 = (argsPartes.length > 1) ? argsPartes[1] : "";
+
+                NoLinha proximoNo = atual.proximo; 
+
+                // --- INÍCIO DA SUBSTITUIÇÃO (if-else if) ---
+                
+                if (comandoInst.equals("MOV")) { // mov x y
+                    setValor(arg1, getValor(arg2));
+                
+                } else if (comandoInst.equals("INC")) { // inc x
+                    setValor(arg1, getValor(arg1) + 1);
+                
+                } else if (comandoInst.equals("DEC")) { // dec x
+                    setValor(arg1, getValor(arg1) - 1);
+                
+                } else if (comandoInst.equals("ADD")) { // add x y
+                    setValor(arg1, getValor(arg1) + getValor(arg2));
+                
+                } else if (comandoInst.equals("SUB")) { // sub x y
+                    setValor(arg1, getValor(arg1) - getValor(arg2));
+                
+                } else if (comandoInst.equals("MUL")) { // mul x y
+                    setValor(arg1, getValor(arg1) * getValor(arg2));
+                
+                } else if (comandoInst.equals("DIV")) { // div x y
+                    int divisor = getValor(arg2);
+                    if (divisor == 0) {
+                        throw new InterpretadorException("Erro: Divisão por zero.");
+                    }
+                    setValor(arg1, getValor(arg1) / divisor);
+                
+                } else if (comandoInst.equals("OUT")) { // out x
+                    System.out.println(getValor(arg1));
+                
+                } else if (comandoInst.equals("JNZ")) { // jnz x y
+                    if (getValor(arg1) != 0) {
+                        int numLinhaPulo = getValor(arg2);
+                        proximoNo = pularPara(numLinhaPulo); 
+                        
+                        if (proximoNo == null) {
+                            throw new InterpretadorException("Erro: Linha " + numLinhaPulo + " não existe.");
+                        }
+                    }
+                    // Se for zero, apenas continua (proximoNo já é atual.proximo)
+                
+                } else if (comandoInst.equals("")) { // Linha vazia (só número)
+                    // Não faz nada, apenas avança
+                
+                } else {
+                    // 'default'
+                    throw new InterpretadorException("Erro: instrução inválida '" + comandoInst + "'.");
+                }
+                
+                // --- FIM DA SUBSTITUIÇÃO ---
+                
+                atual = proximoNo; // Avança para o próximo nó
+
+            } catch (InterpretadorException e) {
+                System.out.println(e.getMessage());
+                System.out.println("Linha: " + linhaCompleta); 
+                executando = false; 
+            } catch (Exception e) {
+                System.out.println("Erro fatal de execução: " + e.getMessage());
+                System.out.println("Linha: " + linhaCompleta);
+                executando = false; 
+            }
+        }
     }
 
     private void processaIns(String argumentos) {
