@@ -1,20 +1,9 @@
-// Identificação do grupo (Nome e RA de cada integrante) aqui
-// Referências (Links, livros, etc.)
-// Link do YouTube (Dia 25)
-// Links do ChatGPT (se usar)
-
+//Enrique Cipolla Martins
+//Henrique Ferreira Marciano - 10439797
 import java.util.Scanner;
-<<<<<<< HEAD
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-=======
-// --- Imports adicionados do código do professor ---
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-// ----------------------------------------------------
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
 
 /**
  * Classe principal que implementa o REPL (Read-Evaluate-Print-Loop)
@@ -27,13 +16,10 @@ public class Interpretador {
     private boolean modificado;  // Controla modificações não salvas
     private String arquivoAtual; // Nome do arquivo carregado
 
-<<<<<<< HEAD
     // Registradores (A-Z) e sinalizadores de inicialização
     private int[] registradores;
     private boolean[] inicializados;
 
-=======
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
     /**
      * Construtor da classe. Inicializa o estado.
      */
@@ -41,10 +27,7 @@ public class Interpretador {
         this.codigo = new ListaEncadeada();
         this.modificado = false;
         this.arquivoAtual = null;
-<<<<<<< HEAD
         // Os arrays de registradores são inicializados no início do processarRun()
-=======
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
     }
 
     /**
@@ -67,11 +50,7 @@ public class Interpretador {
 
             // Separa o comando (ex: "LOAD") dos argumentos (ex: "c:\tmp\teste1.ed1")
             String[] partes = entrada.split(" ", 2);
-<<<<<<< HEAD
             String comando = partes[0].toUpperCase(); // Comandos são case-insensitive
-=======
-            String comando = partes[0].toUpperCase(); // [cite: 22] Comandos são case-insensitive
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
             String argumentos = (partes.length > 1) ? partes[1] : ""; // O resto da string
 
             // --- Substituição do switch por if-else if ---
@@ -80,19 +59,14 @@ public class Interpretador {
                 processarLoad(argumentos, teclado);
                 
             } else if (comando.equals("LIST")) {
-<<<<<<< HEAD
                 // Lembre-se que o PDF pede para 'listar()'
                 // pausar a cada 20 linhas.
                 codigo.listar(); 
-=======
-                codigo.listar();
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
                 
             } else if (comando.equals("RUN")) {
                 processarRun();
                 
             } else if (comando.equals("INS")) {
-<<<<<<< HEAD
                 processaIns(argumentos);
                 
             } else if (comando.equals("DEL")) {
@@ -100,21 +74,11 @@ public class Interpretador {
                 
             } else if (comando.equals("SAVE")) {
                 processaSave(argumentos, teclado);
-=======
-                processaIns(argumentos); // Renomeei para evitar conflito de nome
-                
-            } else if (comando.equals("DEL")) {
-                processaDel(argumentos); // Renomeei para evitar conflito de nome
-                
-            } else if (comando.equals("SAVE")) {
-                processaSave(argumentos); // Renomeei para evitar conflito de nome
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
                 
             } else if (comando.equals("EXIT")) {
                 executando = processarExit(teclado);
                 
             } else {
-<<<<<<< HEAD
                 System.out.println("Erro: comando inválido.");
             }
         }
@@ -127,21 +91,6 @@ public class Interpretador {
 
     /**
      * Carrega um arquivo .ed1 na memória (ListaEncadeada).
-=======
-                System.out.println("Erro: comando inválido."); // [cite: 95]
-            }
-        }
-
-        System.out.println("Fim."); // [cite: 212]
-        teclado.close();
-    }
-
-    // --- MÉTODOS AUXILIARES PARA CADA COMANDO (A implementar nos próximos dias) ---
-
-    /**
-     * Carrega um arquivo .ed1 na memória (ListaEncadeada).
-     * Lógica adaptada do método 'leArquivo' do professor.
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
      */
     private void processarLoad(String argumentos, Scanner teclado) {
         String caminho = argumentos;
@@ -150,66 +99,38 @@ public class Interpretador {
             return;
         }
 
-<<<<<<< HEAD
         // 1. Verificar 'this.modificado'.
         if (this.modificado) {
             System.out.print("Arquivo atual contém alterações não salvas. Deseja salvar? (S/N) ");
             String resposta = teclado.nextLine().toUpperCase();
             if (resposta.equals("S")) {
                 processaSave(this.arquivoAtual, teclado);
-=======
-        // 1. Verificar 'this.modificado'. [cite: 23]
-        if (this.modificado) {
-            System.out.print("Arquivo atual contém alterações não salvas. Deseja salvar? (S/N) "); // [cite: 184]
-            String resposta = teclado.nextLine().toUpperCase();
-            if (resposta.equals("S")) {
-                processaSave(this.arquivoAtual); // [cite: 186]
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
             }
         }
 
         // 3. Limpar a lista 'codigo' e preparar para carregar
-<<<<<<< HEAD
         // (SÓ SUBSTITUI SE O LOAD FOR BEM SUCEDIDO)
         ListaEncadeada novaLista = new ListaEncadeada();
         
         // 4. Abrir e ler o arquivo
-=======
-        this.codigo = new ListaEncadeada();
-        
-        // 4. Abrir e ler o arquivo 'argumentos' (que é o <ARQUIVO.ED1>) [cite: 23]
-        // (Lógica do 'leArquivo' do professor)
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
         File arquivo = new File(caminho);
         Scanner leitorArquivo = null;
         
         try {
             leitorArquivo = new Scanner(arquivo);
             
-<<<<<<< HEAD
             // 5. Para cada linha, fazer parse e chamar 'codigo.inserir(...)'
             while (leitorArquivo.hasNextLine()) {
                 String linhaDoArquivo = leitorArquivo.nextLine().trim();
                 
                 if (linhaDoArquivo.isEmpty()) continue; 
 
-=======
-            // 5. Para cada linha, fazer parse e chamar 'codigo.inserir(...)' [cite: 23]
-            while (leitorArquivo.hasNextLine()) {
-                String linhaDoArquivo = leitorArquivo.nextLine().trim();
-                
-                // Pula linhas em branco no arquivo
-                if (linhaDoArquivo.isEmpty()) continue; 
-
-                // Tenta separar a linha no primeiro espaço
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
                 String[] partesLinha = linhaDoArquivo.split(" ", 2);
                 
                 try {
                     int numeroLinha = Integer.parseInt(partesLinha[0]);
                     String instrucao = (partesLinha.length > 1) ? partesLinha[1] : "";
                     
-<<<<<<< HEAD
                     if(numeroLinha < 0) { // (validação de linha negativa)
                          System.out.println("Erro ao carregar (linha negativa inválida): " + linhaDoArquivo);
                     } else {
@@ -233,30 +154,6 @@ public class Interpretador {
             // 7. Exibir notificação (erro)
             System.out.printf("Erro ao abrir o arquivo: %s\n", e.getMessage());
             // Se deu erro, a lista 'this.codigo' antiga é mantida.
-=======
-                    this.codigo.inserir(numeroLinha, instrucao);
-                    
-                } catch (NumberFormatException e) {
-                    System.out.println("Erro ao processar linha (número inválido): " + linhaDoArquivo);
-                } catch (Exception e) {
-                    System.out.println("Erro ao inserir linha: " + linhaDoArquivo);
-                }
-            }
-            
-            // 6. Atualizar 'this.arquivoAtual = argumentos' e 'this.modificado = false'
-            this.arquivoAtual = caminho;
-            this.modificado = false;
-            
-            // 7. Exibir notificação (sucesso) [cite: 23, 97]
-            System.out.println("Arquivo '" + caminho + "' carregado com sucesso.");
-
-        } catch (IOException e) {
-            // 7. Exibir notificação (erro) [cite: 23, 170]
-            System.out.printf("Erro ao abrir o arquivo: %s\n", e.getMessage());
-            // Se deu erro, limpamos a lista para não deixar lixo
-            this.codigo = new ListaEncadeada();
-            this.arquivoAtual = null;
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
         } finally {
             if (leitorArquivo != null) {
                 leitorArquivo.close();
@@ -264,23 +161,16 @@ public class Interpretador {
         }
     }
 
-<<<<<<< HEAD
     /**
      * Executa (interpreta) o código Assembly em memória.
      */
-=======
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
     private void processarRun() {
         if (codigo.inicio == null) {
             System.out.println("Erro: Não há código na memória para executar.");
             return;
         }
-<<<<<<< HEAD
         
         // Inicializa os registradores a cada execução
-=======
-
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
         this.registradores = new int[26];
         this.inicializados = new boolean[26];
 
@@ -292,11 +182,7 @@ public class Interpretador {
             
             try {
                 String[] partes = atual.instrucao.trim().split("\\s+", 2);
-<<<<<<< HEAD
                 String comandoInst = (partes.length > 0) ? partes[0].toUpperCase() : ""; // (case insensitive)
-=======
-                String comandoInst = (partes.length > 0) ? partes[0].toUpperCase() : "";
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
                 String args = (partes.length > 1) ? partes[1] : "";
                 
                 String[] argsPartes = args.split("\\s+");
@@ -305,11 +191,7 @@ public class Interpretador {
 
                 NoLinha proximoNo = atual.proximo; 
 
-<<<<<<< HEAD
                 // --- INÍCIO DA LÓGICA (if-else if) ---
-=======
-                // --- INÍCIO DA SUBSTITUIÇÃO (if-else if) ---
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
                 
                 if (comandoInst.equals("MOV")) { // mov x y
                     setValor(arg1, getValor(arg2));
@@ -341,19 +223,11 @@ public class Interpretador {
                 
                 } else if (comandoInst.equals("JNZ")) { // jnz x y
                     if (getValor(arg1) != 0) {
-<<<<<<< HEAD
                         int numLinhaPulo = getValor(arg2); // 'y' pode ser registrador ou const.
                         proximoNo = pularPara(numLinhaPulo); 
                         
                         if (proximoNo == null) {
                             throw new InterpretadorException("Erro: Linha " + numLinhaPulo + " não existe."); // (salto inválido)
-=======
-                        int numLinhaPulo = getValor(arg2);
-                        proximoNo = pularPara(numLinhaPulo); 
-                        
-                        if (proximoNo == null) {
-                            throw new InterpretadorException("Erro: Linha " + numLinhaPulo + " não existe.");
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
                         }
                     }
                     // Se for zero, apenas continua (proximoNo já é atual.proximo)
@@ -366,26 +240,16 @@ public class Interpretador {
                     throw new InterpretadorException("Erro: instrução inválida '" + comandoInst + "'.");
                 }
                 
-<<<<<<< HEAD
                 // --- FIM DA LÓGICA ---
-=======
-                // --- FIM DA SUBSTITUIÇÃO ---
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
                 
                 atual = proximoNo; // Avança para o próximo nó
 
             } catch (InterpretadorException e) {
                 System.out.println(e.getMessage());
-<<<<<<< HEAD
                 System.out.println("Linha: " + linhaCompleta); // (mostra erro coerente)
                 executando = false; 
             } catch (Exception e) {
                 // Pega outros erros (ex: ArrayIndexOutOfBounds se 'inc' vier sem arg)
-=======
-                System.out.println("Linha: " + linhaCompleta); 
-                executando = false; 
-            } catch (Exception e) {
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
                 System.out.println("Erro fatal de execução: " + e.getMessage());
                 System.out.println("Linha: " + linhaCompleta);
                 executando = false; 
@@ -393,29 +257,16 @@ public class Interpretador {
         }
     }
 
-<<<<<<< HEAD
     /**
      * Insere ou atualiza uma linha de código.
      */
     private void processaIns(String argumentos) {
-=======
-    private void processaIns(String argumentos) {
-        // TODO (Plano: Dia 5)
-        // 1. Fazer o parse de 'argumentos' para extrair <LINHA> e <INSTRUÇÃO> [cite: 23]
-        // 2. Validar se <LINHA> é um número e não é negativa [cite: 23, 166]
-        // 3. Chamar 'codigo.inserir(numeroLinha, instrucao)'
-        // 4. Se a inserção foi bem-sucedida, 'this.modificado = true'
-        // 5. Exibir notificação (inserida ou atualizada) [cite: 23, 110, 135]
-        
-        // (Implementação de exemplo baseada no TODO e no PDF)
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
         try {
             String[] partes = argumentos.split(" ", 2);
             int numeroLinha = Integer.parseInt(partes[0]);
             String instrucao = (partes.length > 1) ? partes[1] : "";
 
             if (numeroLinha < 0) {
-<<<<<<< HEAD
                 System.out.println("Erro: linha " + numeroLinha + " inválida.");
                 return;
             }
@@ -430,27 +281,11 @@ public class Interpretador {
                 System.out.println("Linha inserida:");
             } else {
                 System.out.println("Linha atualizada:");
-=======
-                 System.out.println("Erro: linha " + numeroLinha + " inválida."); // [cite: 166]
-                 return;
-            }
-
-            // Usando o retorno 'boolean' do método 'inserir' da ListaEncadeada
-            boolean foiInserido = codigo.inserir(numeroLinha, instrucao);
-            
-            this.modificado = true; // [cite: 23] (qualquer operação bem sucedida marca como modificado)
-
-            if (foiInserido) {
-                System.out.println("Linha inserida:"); // [cite: 110]
-            } else {
-                System.out.println("Linha atualizada:"); // [cite: 135]
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
             }
             System.out.println(numeroLinha + " " + instrucao);
 
         } catch (NumberFormatException e) {
             System.out.println("Erro: O número da linha é inválido.");
-<<<<<<< HEAD
         } catch (ArrayIndexOutOfBoundsException e) {
              System.out.println("Erro: Formato inválido. Use: INS <LINHA> <INSTRUÇÃO>");
         }
@@ -487,11 +322,11 @@ public class Interpretador {
                     return;
                 }
 
-                // (Assumindo que 'removerIntervalo' retorna o n° de linhas removidas)
+                // (Assumindo que 'removerIntervalo' retorna o número de linhas removidas)
                 int removidas = codigo.removerIntervalo(linhaI, linhaF);
                 
                 if (removidas > 0) {
-                    System.out.println(removidas + " linhas removidas no intervalo [" + linhaI + ", " + linhaF + "].");
+                    System.out.println("Linhas removidas no intervalo [" + linhaI + ", " + linhaF + "].");
                     this.modificado = true;
                 } else {
                     System.out.println("Nenhuma linha encontrada no intervalo [" + linhaI + ", " + linhaF + "].");
@@ -499,37 +334,10 @@ public class Interpretador {
                 
             } else {
                 System.out.println("Erro: Formato inválido. Use: DEL <LINHA> ou DEL <LINHA_I> <LINHA_F>");
-=======
-        } catch (Exception e) {
-            System.out.println("Erro ao processar INS: " + e.getMessage());
-        }
-    }
-
-    private void processaDel(String argumentos) {
-        // TODO (Plano: Dia 6)
-        // 1. Fazer o parse de 'argumentos' para ver se é <LINHA> ou <LINHA_I> <LINHA_F> [cite: 23, 27]
-        // 2. Chamar 'codigo.remover(linha)' ou 'codigo.removerIntervalo(linhaI, linhaF)'
-        // 3. Se a remoção foi bem-sucedida, 'this.modificado = true'
-        // 4. Exibir notificação (removida, inexistente, intervalo inválido) [cite: 23, 27, 128, 126, 164]
-        
-        // (Implementação de exemplo para DEL <LINHA>)
-        try {
-            int numeroLinha = Integer.parseInt(argumentos);
-            
-            // Usando o retorno 'boolean' do método 'remover' da ListaEncadeada
-            boolean foiRemovido = codigo.remover(numeroLinha);
-
-            if (foiRemovido) {
-                System.out.println("Linha removida:"); // [cite: 128]
-                this.modificado = true;
-            } else {
-                System.out.println("Erro: linha " + numeroLinha + " inexistente."); // [cite: 126]
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
             }
             
         } catch (NumberFormatException e) {
              System.out.println("Erro: O número da linha é inválido.");
-<<<<<<< HEAD
         }
     }
 
@@ -541,28 +349,10 @@ public class Interpretador {
         boolean isSaveAs = !caminho.isEmpty(); // É 'SAVE <ARQUIVO>' ou só 'SAVE'?
         
         if (!isSaveAs) { // (SAVE sem argumentos)
-=======
-        } catch (Exception e) {
-            System.out.println("Erro ao processar DEL: " + e.getMessage());
-        }
-        
-        // System.out.println("Implementar (Dia 6): DEL " + argumentos);
-    }
-
-    /**
-     * Salva o código-fonte da memória (ListaEncadeada) para um arquivo.
-     * Lógica adaptada do método 'gravaArquivo' do professor.
-     */
-    private void processaSave(String argumentos) {
-        // 1. Determinar o nome do arquivo:
-        String caminho = argumentos;
-        if (caminho.isEmpty()) {
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
             if (this.arquivoAtual == null) {
                 System.out.println("Erro: Nenhum arquivo aberto. Use 'SAVE <ARQUIVO.ED1>'.");
                 return;
             }
-<<<<<<< HEAD
             caminho = this.arquivoAtual;
         } else {
             // (SAVE <ARQUIVO.ED1>)
@@ -579,17 +369,6 @@ public class Interpretador {
         }
         
         // 3. Percorrer a 'codigo' e escrever cada nó no arquivo.
-=======
-            caminho = this.arquivoAtual; // [cite: 27] (SAVE sem argumentos usa o arquivo atual)
-        }
-        
-        // 2. Para "SAVE <ARQUIVO.ED1>", verificar se o arquivo existe... (TODO)
-        // [cite: 27] (Essa lógica de perguntar se quer sobrescrever precisa ser implementada)
-        
-        
-        // 3. Percorrer a 'codigo' e escrever cada nó no arquivo.
-        // (Lógica do 'gravaArquivo' do professor)
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
         try (PrintWriter escritor = new PrintWriter(caminho)) {
             
             NoLinha atual = this.codigo.inicio;
@@ -598,15 +377,9 @@ public class Interpretador {
                 atual = atual.proximo;
             }
             
-<<<<<<< HEAD
             // 4. Se salvar, 'this.modificado = false' e exibir notificação.
             this.modificado = false;
             this.arquivoAtual = caminho; // Atualiza o arquivo atual
-=======
-            // 4. Se salvar, 'this.modificado = false' e exibir notificação. [cite: 27, 168]
-            this.modificado = false;
-            this.arquivoAtual = caminho; // Atualiza o arquivo atual se foi um 'SAVE <novo_nome>'
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
             System.out.println("Arquivo '" + caminho + "' salvo com sucesso.");
             
         } catch (IOException e) {
@@ -614,7 +387,6 @@ public class Interpretador {
         }
     }
 
-<<<<<<< HEAD
     /**
      * Pergunta se deseja salvar antes de sair.
      */
@@ -622,27 +394,14 @@ public class Interpretador {
         // 1. Verificar 'this.modificado'.
         if (this.modificado) {
             // 2. Se true, perguntar se quer salvar (S/N)
-=======
-    private boolean processarExit(Scanner teclado) {
-        // 1. Verificar 'this.modificado'. [cite: 27]
-        if (this.modificado) {
-            // 2. Se true, perguntar se quer salvar (S/N) [cite: 27, 210]
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
             System.out.print("Arquivo atual contém alterações não salvas. Deseja salvar? (S/N) ");
             String resposta = teclado.nextLine().toUpperCase();
             
             if (resposta.equals("S")) {
-<<<<<<< HEAD
                 // 3. Se "S", chamar 'processaSave'
                 processaSave(this.arquivoAtual, teclado);
             }
             // 4. Se "N", apenas sair
-=======
-                // 3. Se "S", chamar 'processaSave(this.arquivoAtual)' [cite: 186]
-                processaSave(this.arquivoAtual);
-            }
-            // 4. Se "N", apenas sair [cite: 211]
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
         }
         
         // 5. Retornar 'false' para sinalizar ao loop 'while' que deve parar.
@@ -650,7 +409,6 @@ public class Interpretador {
     }
 
 
-<<<<<<< HEAD
     // --- MÉTODOS AUXILIARES DO 'RUN' (ADICIONADOS) ---
     // (Estes eram os métodos que faltavam e causavam o erro 'cannot find symbol')
 
@@ -722,8 +480,6 @@ public class Interpretador {
     // --- FIM DOS MÉTODOS AUXILIARES ---
 
 
-=======
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
     /**
      * Método main da aplicação.
      * Cria uma instância do Interpretador e inicia o REPL.
@@ -733,7 +489,6 @@ public class Interpretador {
         Interpretador repl = new Interpretador();
         repl.iniciar();
     }
-<<<<<<< HEAD
 
     /**
      * Exceção personalizada usada pelo interpretador para sinalizar erros de execução
@@ -744,6 +499,3 @@ public class Interpretador {
         }
     }
 }
-=======
-}
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f

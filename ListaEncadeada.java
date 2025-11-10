@@ -1,9 +1,6 @@
 //Enrique Cipolla Martins
 //Henrique Ferreira Marciano - 10439797
-<<<<<<< HEAD
-=======
-import java.util.Scanner; // Necessário para o listar()
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
+import java.util.Scanner; // Necessário para a pausa do LISTAR
 
 public class ListaEncadeada {
     NoLinha inicio; // O "head" da lista
@@ -12,17 +9,14 @@ public class ListaEncadeada {
         this.inicio = null;
     }
 
-<<<<<<< HEAD
-    // --- Métodos a implementar (Próximos dias) ---
-
-    // Método para inserir/atualizar uma linha 
-    // Deve manter a lista ordenada pelo numeroLinha
+    /**
+     * Insere uma nova linha de código ou atualiza uma existente.
+     * Mantém a lista ordenada pelo número da linha.
+     * @param numeroLinha O número da linha a inserir/atualizar.
+     * @param instrucao O código assembly da linha.
+     * @return true se foi uma nova inserção, false se foi uma atualização.
+     */
     public boolean inserir(int numeroLinha, String instrucao) {
-        System.out.println("Implementar: Inserir linha " + numeroLinha);
-=======
-    // --- Seu método (correto) ---
-    public boolean inserir(int numeroLinha, String instrucao) {
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
         NoLinha novoNo = new NoLinha(numeroLinha, instrucao);
         NoLinha atual = this.inicio;
         NoLinha anterior = null;
@@ -55,37 +49,10 @@ public class ListaEncadeada {
         return true; // Indica que foi uma nova inserção
     }
 
-<<<<<<< HEAD
-    // Método para remover uma linha 
-    public boolean remover(int numeroLinha) {
-        System.out.println("Implementar: Remover linha " + numeroLinha);
-        // Lógica de remoção aqui...
-        return false; // Retorna true se removeu, false se não encontrou
-    }
-
-    // Método para remover um intervalo 
-    public int removerIntervalo(int linhaInicial, int linhaFinal) {
-        System.out.println("Implementar: Remover de " + linhaInicial + " a " + linhaFinal);
-        // Lógica de remoção de intervalo aqui...
-        return 0;
-    }
-
-    // Método para listar o conteúdo 
-    public void listar() {
-        System.out.println("Implementar: Listar código");
-        // Lógica de percorrer a lista e imprimir (de 20 em 20) aqui...
-    }
-
-    // ... outros métodos (salvar, buscarNo, etc.)
-}
-=======
-    // --- Métodos implementados ---
-
     /**
-     * Remove uma linha específica da lista.
-     * 
+     * Remove uma única linha de código da lista.
      * @param numeroLinha O número da linha a ser removida.
-     * @return true se a remoção foi bem-sucedida, false se a linha não foi encontrada.
+     * @return true se a linha foi encontrada e removida, false caso contrário.
      */
     public boolean remover(int numeroLinha) {
         NoLinha atual = this.inicio;
@@ -97,108 +64,99 @@ public class ListaEncadeada {
             atual = atual.proximo;
         }
 
-        // 2. Se não encontrou (chegou ao fim da lista)
+        // 2. Se não encontrou (chegou ao fim ou lista vazia)
         if (atual == null) {
-            return false; // Linha não encontrada
+            return false;
         }
 
         // 3. Se encontrou, remove o nó 'atual'
         if (anterior == null) {
-            // Caso 3a: Remoção do início da lista
+            // Caso 3a: O nó a ser removido é o primeiro (this.inicio)
             this.inicio = atual.proximo;
         } else {
-            // Caso 3b: Remoção do meio ou fim
+            // Caso 3b: O nó a ser removido está no meio ou fim
             anterior.proximo = atual.proximo;
         }
 
-        return true; // Remoção bem-sucedida
+        return true; // Sucesso na remoção
     }
 
     /**
-     * Remove um intervalo de linhas, inclusivo.
-     * 
-     * @param linhaInicial A linha inicial do intervalo.
-     * @param linhaFinal A linha final do intervalo.
-     * @return true se pelo menos uma linha foi removida, false caso contrário.
+     * Remove um intervalo de linhas de código, incluindo os limites.
+     * @param linhaInicial A primeira linha do intervalo a remover.
+     * @param linhaFinal A última linha do intervalo a remover.
+     * @return O número de linhas que foram efetivamente removidas.
      */
-    public boolean removerIntervalo(int linhaInicial, int linhaFinal) {
-        // A especificação pede para notificar quais linhas foram removidas 
-        // Esta implementação é O(N) e mais eficiente que chamar remover() em loop.
-
-        NoLinha atual = this.inicio;
+    public int removerIntervalo(int linhaInicial, int linhaFinal) {
+        int contadorRemovidas = 0;
         NoLinha anterior = null;
-        boolean removeuAlgo = false;
+        NoLinha atual = this.inicio;
 
-        // 1. Acha o nó ANTERIOR ao início do intervalo
+        // 1. Achar o nó ANTERIOR ao início do intervalo
         while (atual != null && atual.numeroLinha < linhaInicial) {
             anterior = atual;
             atual = atual.proximo;
         }
 
-        // Se 'atual' é null, não há nada no intervalo para remover
-        if (atual == null) {
-            return false;
-        }
+        // 'atual' agora é o primeiro nó DENTRO do intervalo (ou o primeiro após, ou nulo)
+        // 'anterior' é o último nó ANTES do intervalo (ou nulo, se o intervalo começa no início)
         
-        // 'atual' agora é o primeiro nó dentro do intervalo (ou logo após)
+        NoLinha noAntesDoIntervalo = anterior;
 
-        // 2. Acha o nó FINAL do intervalo e vai imprimindo
-        NoLinha noInicioDoIntervalo = atual; // Guarda para onde o 'anterior' vai apontar
-        
-        System.out.println("Linhas removidas:"); // [cite: 152]
-        
+        // 2. Percorrer e contar os nós DENTRO do intervalo (para remoção)
         while (atual != null && atual.numeroLinha <= linhaFinal) {
-            System.out.println(atual.numeroLinha + " " + atual.instrucao); // [cite: 27, 153, 154, 155]
-            removeuAlgo = true;
-            atual = atual.proximo;
+            contadorRemovidas++;
+            atual = atual.proximo; // Avança para o próximo nó
         }
 
         // 'atual' agora é o primeiro nó DEPOIS do intervalo
-
-        // 3. Se nada foi removido (ex: DEL 25 28 e só tinha linha 30)
-        if (!removeuAlgo) {
-            System.out.println("Nenhuma linha encontrada no intervalo [" + linhaInicial + ", " + linhaFinal + "].");
-            return false;
+        
+        // 3. Se não removeu nada, retorna 0
+        if (contadorRemovidas == 0) {
+            return 0;
         }
 
-        // 4. Conecta o 'anterior' ao 'atual' (pulando o intervalo)
-        if (anterior == null) {
-            // O intervalo removido começa do 'inicio'
+        // 4. Conectar o nó 'anterior' ao nó 'atual' (pulando o intervalo)
+        if (noAntesDoIntervalo == null) {
+            // O intervalo removido começava no início da lista
             this.inicio = atual;
         } else {
-            // O intervalo estava no meio/fim
-            anterior.proximo = atual;
+            // O intervalo estava no meio ou fim da lista
+            noAntesDoIntervalo.proximo = atual;
         }
 
-        return true;
+        return contadorRemovidas;
     }
 
     /**
-     * Exibe o conteúdo completo do código-fonte na memória,
-     * pausando de 20 em 20 linhas. 
+     * Exibe em tela o conteúdo completo do código-fonte existente na
+     * [cite_start]memória, pausando a cada 20 linhas[cite: 23].
      */
     public void listar() {
         if (this.inicio == null) {
             System.out.println("(Nenhum código na memória)");
             return;
         }
-        
-        Scanner tecladoPausa = new Scanner(System.in);
+
+        Scanner scannerPausa = new Scanner(System.in);
         NoLinha atual = this.inicio;
         int contadorLinhas = 0;
 
         while (atual != null) {
-            // [cite: 33] Exibe o número da linha e a instrução
-            System.out.println(atual.numeroLinha + " " + atual.instrucao); 
+            // Imprime a linha atual
+            System.out.println(atual.numeroLinha + " " + atual.instrucao);
             contadorLinhas++;
-            atual = atual.proximo;
+            atual = atual.proximo; // Avança para o próximo
 
-            // Lógica da pausa de 20 em 20 
+            // Verifica se deve pausar (a cada 20 linhas)
+            // Só pausa se não for o final da lista (atual != null)
             if (contadorLinhas % 20 == 0 && atual != null) {
-                System.out.print("-- Pressione ENTER para continuar --");
-                tecladoPausa.nextLine();
+                System.out.print("... Pressione <Enter> para continuar ...");
+                scannerPausa.nextLine(); // Espera o usuário pressionar Enter
             }
         }
+        
+        // Importante: NÃO feche o scannerPausa (scannerPausa.close())
+        // pois isso fecharia o System.in e quebraria o REPL principal.
     }
 }
->>>>>>> 46839954434c32bfe889c45ede32ee258e64c50f
