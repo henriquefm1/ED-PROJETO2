@@ -1,3 +1,6 @@
+//Enrique Cipolla Martins - 10427834
+//Henrique Ferreira Marciano - 10439797
+
 public class Executor {
 
     private int[] registradores;
