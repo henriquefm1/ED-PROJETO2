@@ -5,10 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/**
- * Classe principal que implementa o REPL (Read-Evaluate-Print-Loop)
- * para o interpretador de Assembly simplificado.
- */
+//Classe principal que implementa o REPL (Read-Evaluate-Print-Loop) para o interpretador de Assembly simplificado.
+
 public class Interpretador {
 
     // Nossos "dados" principais: a lista de código e o estado do arquivo
@@ -20,9 +18,7 @@ public class Interpretador {
     private int[] registradores;
     private boolean[] inicializados;
 
-    /**
-     * Construtor da classe. Inicializa o estado.
-     */
+    //Construtor da classe. Inicializa o estado.
     public Interpretador() {
         this.codigo = new ListaEncadeada();
         this.modificado = false;
@@ -30,9 +26,7 @@ public class Interpretador {
         // Os arrays de registradores são inicializados no início do processarRun()
     }
 
-    /**
-     * Método principal que inicia e executa o REPL.
-     */
+    //Método principal que inicia e executa o REPL.
     public void iniciar() {
         Scanner teclado = new Scanner(System.in);
         boolean executando = true;
@@ -53,8 +47,7 @@ public class Interpretador {
             String comando = partes[0].toUpperCase(); // Comandos são case-insensitive
             String argumentos = (partes.length > 1) ? partes[1] : ""; // O resto da string
 
-            // --- Substituição do switch por if-else if ---
-            
+            //Serie de ifs e elses
             if (comando.equals("LOAD")) {
                 processarLoad(argumentos, teclado);
                 
@@ -85,11 +78,8 @@ public class Interpretador {
         teclado.close();
     }
 
-    // --- MÉTODOS AUXILIARES PARA CADA COMANDO ---
-
-    /**
-     * Carrega um arquivo .ed1 na memória (ListaEncadeada).
-     */
+    //MÉTODOS AUXILIARES
+    //Carrega um arquivo .ed1 na memória (ListaEncadeada).
     private void processarLoad(String argumentos, Scanner teclado) {
         String caminho = argumentos;
         if (caminho.isEmpty()) {
@@ -97,7 +87,7 @@ public class Interpretador {
             return;
         }
 
-        // 1. Verificar 'this.modificado'.
+        //Verificar 'this.modificado'.
         if (this.modificado) {
             System.out.print("Arquivo atual contém alterações não salvas. Deseja salvar? (S/N) ");
             String resposta = teclado.nextLine().toUpperCase();
@@ -106,17 +96,17 @@ public class Interpretador {
             }
         }
 
-        // 3. Limpar a lista 'codigo' e preparar para carregar
+        //Limpar a lista 'codigo' e preparar para carregar
         ListaEncadeada novaLista = new ListaEncadeada();
         
-        // 4. Abrir e ler o arquivo
+        //Abrir e ler o arquivo
         File arquivo = new File(caminho);
         Scanner leitorArquivo = null;
         
         try {
             leitorArquivo = new Scanner(arquivo);
             
-            // 5. Para cada linha, fazer parse e chamar 'codigo.inserir(...)'
+            //Para cada linha, fazer parse e chamar 'codigo.inserir()'
             while (leitorArquivo.hasNextLine()) {
                 String linhaDoArquivo = leitorArquivo.nextLine().trim();
                 
@@ -139,16 +129,16 @@ public class Interpretador {
                 } 
             }
             
-            // 6. SÓ ATUALIZA SE DEU TUDO CERTO
+            //SÓ ATUALIZA SE DEU TUDO CERTO
             this.codigo = novaLista;
             this.arquivoAtual = caminho;
             this.modificado = false;
             
-            // 7. Exibir notificação (sucesso)
+            //Exibir notificação (sucesso)
             System.out.println("Arquivo '" + caminho + "' carregado com sucesso.");
 
         } catch (IOException e) {
-            // 7. Exibir notificação (erro)
+            //Exibir notificação (erro)
             System.out.printf("Erro ao abrir o arquivo: %s\n", e.getMessage());
         } finally {
             if (leitorArquivo != null) {
@@ -157,9 +147,8 @@ public class Interpretador {
         }
     }
 
-    /**
-     * Executa (interpreta) o código Assembly em memória.
-     */
+ 
+    //Executa (interpreta) o código Assembly em memória.
     private void processarRun() {
         if (codigo.inicio == null) {
             System.out.println("Erro: Não há código na memória para executar.");
@@ -178,7 +167,7 @@ public class Interpretador {
             
             try {
                 String[] partes = atual.instrucao.trim().split("\\s+", 2);
-                String comandoInst = (partes.length > 0) ? partes[0].toUpperCase() : ""; // (case insensitive)
+                String comandoInst = (partes.length > 0) ? partes[0].toUpperCase() : "";
                 String args = (partes.length > 1) ? partes[1] : "";
                 
                 String[] argsPartes = args.split("\\s+");
@@ -215,12 +204,9 @@ public class Interpretador {
                     setValor(arg1, getValor(arg1) / divisor);
                 
                 } else if (comandoInst.equals("OUT")) { // out x
-                    // **CORREÇÃO APLICADA AQUI**
-                    // 'OUT' só aceita registradores. Não podemos usar getValor(arg1)
-                    // porque ele aceitaria 'OUT 10', o que é inválido. 
+                    // 'OUT' só aceita registradores. porque ele aceitaria 'OUT 10', o que é inválido.
                     int indice = getIndice(arg1); // getIndice já valida se é A-Z
                     
-                    // REGRA DO PDF: Não pode ler registrador não inicializado
                     if (!this.inicializados[indice]) {
                         throw new InterpretadorException("Erro: Registrador '" + arg1.toUpperCase() + "' usado antes de ser inicializado.");
                     }
@@ -245,8 +231,6 @@ public class Interpretador {
                     throw new InterpretadorException("Erro: instrução inválida '" + comandoInst + "'.");
                 }
                 
-                // --- FIM DA LÓGICA ---
-                
                 atual = proximoNo; // Avança para o próximo nó
 
             } catch (InterpretadorException e) {
@@ -262,9 +246,7 @@ public class Interpretador {
         }
     }
 
-    /**
-     * Insere ou atualiza uma linha de código.
-     */
+    //Insere ou atualiza uma linha de código.
     private void processaIns(String argumentos) {
         try {
             String[] partes = argumentos.split(" ", 2);
@@ -293,10 +275,7 @@ public class Interpretador {
         }
     }
 
-    /**
-     * Remove uma linha ou um intervalo de linhas.
-     * AGORA EXIBE AS LINHAS REMOVIDAS.
-     */
+    //Remove uma linha ou um intervalo de linhas.
     private void processaDel(String argumentos) {
         try {
             String[] partes = argumentos.split("\\s+");
@@ -305,7 +284,6 @@ public class Interpretador {
                 // --- Caso DEL <LINHA> ---
                 int numeroLinha = Integer.parseInt(partes[0]);
                 
-                // MODIFICAÇÃO: 'remover' agora retorna o NoLinha removido, ou null
                 NoLinha removido = codigo.remover(numeroLinha);
 
                 if (removido != null) {
@@ -318,7 +296,7 @@ public class Interpretador {
                 }
                 
             } else if (partes.length == 2) {
-                // --- Caso DEL <LINHA_I> <LINHA_F> ---
+                //Caso DEL <LINHA_I> <LINHA_F>
                 int linhaI = Integer.parseInt(partes[0]);
                 int linhaF = Integer.parseInt(partes[1]);
                 
@@ -327,7 +305,6 @@ public class Interpretador {
                     return;
                 }
 
-                // MODIFICAÇÃO: 'removerIntervalo' agora retorna uma ListaEncadeada com os nós removidos
                 ListaEncadeada removidas = codigo.removerIntervalo(linhaI, linhaF);
                 
                 if (removidas.inicio != null) { // Se a lista de removidos não está vazia
@@ -347,9 +324,7 @@ public class Interpretador {
         }
     }
 
-    /**
-     * Salva o código-fonte da memória para um arquivo.
-     */
+    //Salva o código-fonte da memória para um arquivo.
     private void processaSave(String argumentos, Scanner teclado) {
         String caminho = argumentos;
         boolean isSaveAs = !caminho.isEmpty(); // É 'SAVE <ARQUIVO>' ou só 'SAVE'?
@@ -361,7 +336,7 @@ public class Interpretador {
             }
             caminho = this.arquivoAtual;
         } else {
-            // (SAVE <ARQUIVO.ED1>)
+            //Salva o arquivo
             File f = new File(caminho);
             // Pergunta se o arquivo existe E não é o que já está aberto
             if (f.exists() && !caminho.equals(this.arquivoAtual)) {
@@ -393,34 +368,28 @@ public class Interpretador {
         }
     }
 
-    /**
-     * Pergunta se deseja salvar antes de sair.
-     */
+    //Pergunta se deseja salvar antes de sair
     private boolean processarExit(Scanner teclado) {
-        // 1. Verificar 'this.modificado'.
+        //Verificar 'this.modificado'.
         if (this.modificado) {
-            // 2. Se true, perguntar se quer salvar (S/N)
+            //Se true, perguntar se quer salvar (S/N)
             System.out.print("Arquivo atual contém alterações não salvas. Deseja salvar? (S/N) ");
             String resposta = teclado.nextLine().toUpperCase();
             
             if (resposta.equals("S")) {
-                // 3. Se "S", chamar 'processaSave'
+                //Se "S", chamar 'processaSave'
                 processaSave(this.arquivoAtual, teclado);
             }
-            // 4. Se "N", apenas sair
+            //Se "N", apenas sair
         }
         
-        // 5. Retornar 'false' para sinalizar ao loop 'while' que deve parar.
         return false; // Retorna 'false' para parar o loop 'while'
     }
 
 
-    // --- MÉTODOS AUXILIARES DO 'RUN' (ADICIONADOS) ---
+    //MÉTODOS AUXILIARES
+    //Converte um nome de registrador (ex: "A") para seu índice no array (ex: 0). Valida se é uma letra única, tratando erros como 'inc 10'.
 
-    /**
-     * Converte um nome de registrador (ex: "A") para seu índice no array (ex: 0).
-     * Valida se é uma letra única, tratando erros como 'inc 10'.
-     */
     private int getIndice(String registrador) throws InterpretadorException {
         if (registrador.isEmpty() || registrador.length() > 1 || !Character.isLetter(registrador.charAt(0))) {
             throw new InterpretadorException("Erro: Argumento '" + registrador + "' não é um registrador válido (A-Z).");
@@ -429,11 +398,10 @@ public class Interpretador {
         return Character.toUpperCase(registrador.charAt(0)) - 'A';
     }
 
-    /**
-     * Obtém o valor de um argumento, que pode ser um número (constante)
-     * ou um registrador.
-     * Valida se registradores foram inicializados antes de ler.
-     */
+
+    //Obtém o valor de um argumento, que pode ser um número (constante) ou um registrador.
+    //Valida se registradores foram inicializados antes de ler.
+
     private int getValor(String arg) throws InterpretadorException {
         if (arg.isEmpty()) {
             throw new InterpretadorException("Erro: Argumento ausente.");
@@ -446,7 +414,6 @@ public class Interpretador {
             // Se não for número, tenta ser um registrador
             int indice = getIndice(arg);
             
-            // REGRA DO PDF: Não pode ler registrador não inicializado
             if (!this.inicializados[indice]) {
                 throw new InterpretadorException("Erro: Registrador '" + arg.toUpperCase() + "' usado antes de ser inicializado.");
             }
@@ -454,19 +421,17 @@ public class Interpretador {
         }
     }
 
-    /**
-     * Define o valor de um registrador e marca-o como inicializado.
-     */
+    //Define o valor de um registrador e marca-o como inicializado.
+
     private void setValor(String arg, int valor) throws InterpretadorException {
         int indice = getIndice(arg); // Valida se 'arg' é um registrador
         this.registradores[indice] = valor;
         this.inicializados[indice] = true; // Marca como inicializado
     }
 
-    /**
-     * Encontra o nó da lista encadeada correspondente a um número de linha.
-     * Usado pelo JNZ.
-     */
+
+    //Encontra o nó da lista encadeada correspondente a um número de linha. Usado pelo JNZ.
+
     private NoLinha pularPara(int numeroLinha) {
         NoLinha atual = codigo.inicio;
         while (atual != null) {
@@ -482,22 +447,13 @@ public class Interpretador {
         return null; // Linha não encontrada
     }
 
-    // --- FIM DOS MÉTODOS AUXILIARES ---
-
-
-    /**
-     * Método main da aplicação.
-     * Cria uma instância do Interpretador e inicia o REPL.
-     */
+    //Método main da aplicação. Cria uma instância do Interpretador e inicia o REPL.
     public static void main(String[] args) {
-        // O main agora só instancia a classe e chama o método de início.
+        // O main instancia a classe e chama o método de início.
         Interpretador repl = new Interpretador();
         repl.iniciar();
     }
 
-    /**
-     * Exceção personalizada usada pelo interpretador para sinalizar erros de execução
-     */
     private static class InterpretadorException extends Exception {
         public InterpretadorException(String message) {
             super(message);
