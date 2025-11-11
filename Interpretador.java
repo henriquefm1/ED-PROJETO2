@@ -1,4 +1,4 @@
-//Enrique Cipolla Martins
+//Enrique Cipolla Martins - 10427834
 //Henrique Ferreira Marciano - 10439797
 import java.util.Scanner;
 import java.io.File;
@@ -59,8 +59,6 @@ public class Interpretador {
                 processarLoad(argumentos, teclado);
                 
             } else if (comando.equals("LIST")) {
-                // Lembre-se que o PDF pede para 'listar()'
-                // pausar a cada 20 linhas.
                 codigo.listar(); 
                 
             } else if (comando.equals("RUN")) {
@@ -109,7 +107,6 @@ public class Interpretador {
         }
 
         // 3. Limpar a lista 'codigo' e preparar para carregar
-        // (SÓ SUBSTITUI SE O LOAD FOR BEM SUCEDIDO)
         ListaEncadeada novaLista = new ListaEncadeada();
         
         // 4. Abrir e ler o arquivo
@@ -131,7 +128,7 @@ public class Interpretador {
                     int numeroLinha = Integer.parseInt(partesLinha[0]);
                     String instrucao = (partesLinha.length > 1) ? partesLinha[1] : "";
                     
-                    if(numeroLinha < 0) { // (validação de linha negativa)
+                    if(numeroLinha < 0) { 
                          System.out.println("Erro ao carregar (linha negativa inválida): " + linhaDoArquivo);
                     } else {
                          novaLista.inserir(numeroLinha, instrucao);
@@ -153,7 +150,6 @@ public class Interpretador {
         } catch (IOException e) {
             // 7. Exibir notificação (erro)
             System.out.printf("Erro ao abrir o arquivo: %s\n", e.getMessage());
-            // Se deu erro, a lista 'this.codigo' antiga é mantida.
         } finally {
             if (leitorArquivo != null) {
                 leitorArquivo.close();
@@ -219,7 +215,16 @@ public class Interpretador {
                     setValor(arg1, getValor(arg1) / divisor);
                 
                 } else if (comandoInst.equals("OUT")) { // out x
-                    System.out.println(getValor(arg1));
+                    // **CORREÇÃO APLICADA AQUI**
+                    // 'OUT' só aceita registradores. Não podemos usar getValor(arg1)
+                    // porque ele aceitaria 'OUT 10', o que é inválido. 
+                    int indice = getIndice(arg1); // getIndice já valida se é A-Z
+                    
+                    // REGRA DO PDF: Não pode ler registrador não inicializado
+                    if (!this.inicializados[indice]) {
+                        throw new InterpretadorException("Erro: Registrador '" + arg1.toUpperCase() + "' usado antes de ser inicializado.");
+                    }
+                    System.out.println(this.registradores[indice]);
                 
                 } else if (comandoInst.equals("JNZ")) { // jnz x y
                     if (getValor(arg1) != 0) {
@@ -227,7 +232,7 @@ public class Interpretador {
                         proximoNo = pularPara(numLinhaPulo); 
                         
                         if (proximoNo == null) {
-                            throw new InterpretadorException("Erro: Linha " + numLinhaPulo + " não existe."); // (salto inválido)
+                            throw new InterpretadorException("Erro: Linha " + numLinhaPulo + " não existe.");
                         }
                     }
                     // Se for zero, apenas continua (proximoNo já é atual.proximo)
@@ -246,7 +251,7 @@ public class Interpretador {
 
             } catch (InterpretadorException e) {
                 System.out.println(e.getMessage());
-                System.out.println("Linha: " + linhaCompleta); // (mostra erro coerente)
+                System.out.println("Linha: " + linhaCompleta); 
                 executando = false; 
             } catch (Exception e) {
                 // Pega outros erros (ex: ArrayIndexOutOfBounds se 'inc' vier sem arg)
@@ -271,10 +276,7 @@ public class Interpretador {
                 return;
             }
 
-            // Assumindo que ListaEncadeada.inserir() retorna 'true' para inserção
-            // e 'false' para atualização.
             boolean foiInserido = codigo.inserir(numeroLinha, instrucao);
-            
             this.modificado = true; 
 
             if (foiInserido) {
@@ -293,6 +295,7 @@ public class Interpretador {
 
     /**
      * Remove uma linha ou um intervalo de linhas.
+     * AGORA EXIBE AS LINHAS REMOVIDAS.
      */
     private void processaDel(String argumentos) {
         try {
@@ -302,11 +305,13 @@ public class Interpretador {
                 // --- Caso DEL <LINHA> ---
                 int numeroLinha = Integer.parseInt(partes[0]);
                 
-                // (Assumindo que 'remover' retorna boolean)
-                boolean foiRemovido = codigo.remover(numeroLinha);
+                // MODIFICAÇÃO: 'remover' agora retorna o NoLinha removido, ou null
+                NoLinha removido = codigo.remover(numeroLinha);
 
-                if (foiRemovido) {
+                if (removido != null) {
                     System.out.println("Linha removida:");
+                    // Exibe a linha que acabou de ser removida
+                    System.out.println(removido.numeroLinha + " " + removido.instrucao); 
                     this.modificado = true;
                 } else {
                     System.out.println("Erro: linha " + numeroLinha + " inexistente.");
@@ -322,11 +327,12 @@ public class Interpretador {
                     return;
                 }
 
-                // (Assumindo que 'removerIntervalo' retorna o número de linhas removidas)
-                int removidas = codigo.removerIntervalo(linhaI, linhaF);
+                // MODIFICAÇÃO: 'removerIntervalo' agora retorna uma ListaEncadeada com os nós removidos
+                ListaEncadeada removidas = codigo.removerIntervalo(linhaI, linhaF);
                 
-                if (removidas > 0) {
-                    System.out.println("Linhas removidas no intervalo [" + linhaI + ", " + linhaF + "].");
+                if (removidas.inicio != null) { // Se a lista de removidos não está vazia
+                    System.out.println("Linhas removidas:"); // Mensagem como na foto
+                    removidas.listarSemPausa(); // Lista os nós removidos
                     this.modificado = true;
                 } else {
                     System.out.println("Nenhuma linha encontrada no intervalo [" + linhaI + ", " + linhaF + "].");
@@ -410,7 +416,6 @@ public class Interpretador {
 
 
     // --- MÉTODOS AUXILIARES DO 'RUN' (ADICIONADOS) ---
-    // (Estes eram os métodos que faltavam e causavam o erro 'cannot find symbol')
 
     /**
      * Converte um nome de registrador (ex: "A") para seu índice no array (ex: 0).
