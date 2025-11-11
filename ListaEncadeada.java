@@ -52,9 +52,9 @@ public class ListaEncadeada {
     /**
      * Remove uma única linha de código da lista.
      * @param numeroLinha O número da linha a ser removida.
-     * @return true se a linha foi encontrada e removida, false caso contrário.
+     * @return O NoLinha que foi removido, ou null se não foi encontrado.
      */
-    public boolean remover(int numeroLinha) {
+    public NoLinha remover(int numeroLinha) {
         NoLinha atual = this.inicio;
         NoLinha anterior = null;
 
@@ -66,7 +66,7 @@ public class ListaEncadeada {
 
         // 2. Se não encontrou (chegou ao fim ou lista vazia)
         if (atual == null) {
-            return false;
+            return null; // Retorna null se não achou
         }
 
         // 3. Se encontrou, remove o nó 'atual'
@@ -78,19 +78,19 @@ public class ListaEncadeada {
             anterior.proximo = atual.proximo;
         }
 
-        return true; // Sucesso na remoção
+        return atual; // Retorna o nó que foi removido
     }
 
     /**
      * Remove um intervalo de linhas de código, incluindo os limites.
      * @param linhaInicial A primeira linha do intervalo a remover.
      * @param linhaFinal A última linha do intervalo a remover.
-     * @return O número de linhas que foram efetivamente removidas.
+     * @return Uma nova ListaEncadeada contendo todos os nós que foram removidos.
      */
-    public int removerIntervalo(int linhaInicial, int linhaFinal) {
-        int contadorRemovidas = 0;
-        NoLinha anterior = null;
+    public ListaEncadeada removerIntervalo(int linhaInicial, int linhaFinal) {
+        ListaEncadeada listaRemovidos = new ListaEncadeada(); // Lista para guardar os removidos
         NoLinha atual = this.inicio;
+        NoLinha anterior = null;
 
         // 1. Achar o nó ANTERIOR ao início do intervalo
         while (atual != null && atual.numeroLinha < linhaInicial) {
@@ -102,18 +102,18 @@ public class ListaEncadeada {
         // 'anterior' é o último nó ANTES do intervalo (ou nulo, se o intervalo começa no início)
         
         NoLinha noAntesDoIntervalo = anterior;
+        NoLinha noInicioIntervalo = atual; // Guarda o início do intervalo que será removido
 
-        // 2. Percorrer e contar os nós DENTRO do intervalo (para remoção)
+        // 2. Percorrer os nós DENTRO do intervalo (para remoção)
         while (atual != null && atual.numeroLinha <= linhaFinal) {
-            contadorRemovidas++;
             atual = atual.proximo; // Avança para o próximo nó
         }
 
         // 'atual' agora é o primeiro nó DEPOIS do intervalo
         
-        // 3. Se não removeu nada, retorna 0
-        if (contadorRemovidas == 0) {
-            return 0;
+        // 3. Se não removeu nada (noInicioIntervalo == atual), retorna a lista vazia
+        if (noInicioIntervalo == atual) {
+            return listaRemovidos;
         }
 
         // 4. Conectar o nó 'anterior' ao nó 'atual' (pulando o intervalo)
@@ -125,12 +125,22 @@ public class ListaEncadeada {
             noAntesDoIntervalo.proximo = atual;
         }
 
-        return contadorRemovidas;
+        // 5. "Fechar" a lista de nós removidos
+        // Encontra o último nó do intervalo removido
+        NoLinha ultimoDoIntervalo = noInicioIntervalo;
+        while(ultimoDoIntervalo.proximo != atual && ultimoDoIntervalo.proximo != null) {
+            ultimoDoIntervalo = ultimoDoIntervalo.proximo;
+        }
+        ultimoDoIntervalo.proximo = null; // Corta a ligação com o resto da lista
+
+        // 6. Atribui a lista de removidos ao 'inicio' da nova lista
+        listaRemovidos.inicio = noInicioIntervalo;
+        return listaRemovidos;
     }
 
     /**
      * Exibe em tela o conteúdo completo do código-fonte existente na
-     * [cite_start]memória, pausando a cada 20 linhas[cite: 23].
+     * memória, pausando a cada 20 linhas. [cite: 25]
      */
     public void listar() {
         if (this.inicio == null) {
@@ -158,5 +168,16 @@ public class ListaEncadeada {
         
         // Importante: NÃO feche o scannerPausa (scannerPausa.close())
         // pois isso fecharia o System.in e quebraria o REPL principal.
+    }
+    
+    /**
+     * Método auxiliar para listar os nós removidos sem a pausa de 20 linhas.
+     */
+    public void listarSemPausa() {
+        NoLinha atual = this.inicio;
+        while (atual != null) {
+            System.out.println(atual.numeroLinha + " " + atual.instrucao);
+            atual = atual.proximo;
+        }
     }
 }
