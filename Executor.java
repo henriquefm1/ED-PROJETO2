@@ -5,7 +5,7 @@ public class Executor {
 
     private int[] registradores;
     private boolean[] inicializados;
-    private ListaEncadeada codigo; // Guarda a referência da lista
+    private ListaEncadeada codigo; //Guarda a referência da lista
 
     public Executor() {
         this.registradores = new int[26];
@@ -19,12 +19,7 @@ public class Executor {
         boolean executando = true;
 
         while (executando && atual != null) {
-            try {
-                // ... toda a lógica do 'if (comandoInst.equals("MOV"))' ...
-                // ... 'else if (comandoInst.equals("INC"))' ...
-                
-                // (O 'pularPara' agora pode buscar na 'this.codigo')
-                
+            try {              
                 atual = atual.proximo; // ou o 'proximoNo' do JNZ
                 
             } catch (InterpretadorException e) {
@@ -35,7 +30,7 @@ public class Executor {
         }
     }
 
-    // --- Métodos Auxiliares Privados ---
+    //Métodos Auxiliares
     
     private int getIndice(String registrador) throws InterpretadorException {
         if (registrador == null || registrador.trim().isEmpty()) {
